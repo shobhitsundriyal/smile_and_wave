@@ -6,6 +6,7 @@
 	.button {
 		@apply p-2 text-xs md:text-sm bg-gradient-to-b border-blue-800 from-blue-500 to-pink-700 rounded-md outline-none active:from-blue-600 active:scale-[0.98];
 	}
+
 	.background {
 		@apply bg-gradient-to-tr
     from-green-500

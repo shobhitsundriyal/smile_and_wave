@@ -7,6 +7,9 @@ import { contractAddress, contractABI } from '../contractdetails'
 export default function Home() {
 	const [currentAccount, setCurrentAccount] = useState()
 	const [wavesByCurrentUser, setWavesByCurrentUser] = useState()
+	const [isLoading, setIsLoading] = useState(0)
+
+	const expectedTransactionTime = 21000
 
 	const checkMetamsk = async () => {
 		try {
@@ -71,13 +74,21 @@ export default function Home() {
 					contractABI,
 					signer
 				)
-				await wavePortalContract.wave()
-				await wavePortalContract
-					.noWavesSentby(currentAccount)
-					.then((res) => {
-						setWavesByCurrentUser(parseInt(res._hex))
-						console.log(parseInt(res._hex))
-					})
+				//await wavePortalContract.wave()
+				setIsLoading(1)
+				setTimeout(async () => {
+					await wavePortalContract
+						.noWavesSentby(currentAccount)
+						.then((res) => {
+							setWavesByCurrentUser(parseInt(res._hex))
+							console.log(parseInt(res._hex))
+						})
+					setIsLoading(0)
+					console.log('.......')
+					let count = await wavePortalContract.getTotalWaves()
+					console.warn(count)
+				}, expectedTransactionTime)
+
 				/*await wavePortalContract
 					.getTotalWaves()
 					.then((count) =>
@@ -109,9 +120,25 @@ export default function Home() {
 				</div>
 				<div className='justify-center items-center flex'>
 					{currentAccount ? (
-						<button className='button text-black' onClick={wave}>
-							Wave at Me
-						</button>
+						isLoading ? (
+							<button className='text-black cursor-not-allowed flex py-3'>
+								{/**Spinner */}
+								<div className=' flex justify-center items-center'>
+									<div className='animate-spin rounded-full h-6 w-6 border-b-2 border-t-2 border-zinc-800'></div>
+								</div>
+								<div className='mx-3  text-yellow-50 font-bold'>
+									Please Wait... while transaction is being
+									mined
+								</div>
+							</button>
+						) : (
+							<button
+								className='button text-white font-bold'
+								onClick={wave}
+							>
+								👋 Wave at Me
+							</button>
+						)
 					) : (
 						<button
 							className='button text-black'
