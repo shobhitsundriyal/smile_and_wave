@@ -1,9 +1,64 @@
-export const contractAddress = '0xE42d3eDcD792B374a5b70E15714270BC7454BC8f'
+export const contractAddress = '0x841d2ee4D9d9F11978f0B8E3fba6B71836BCD646'
 export const contractABI = [
 	{
 		inputs: [],
 		stateMutability: 'nonpayable',
 		type: 'constructor',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'from',
+				type: 'address',
+			},
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'timestamp',
+				type: 'uint256',
+			},
+			{
+				indexed: false,
+				internalType: 'string',
+				name: 'message',
+				type: 'string',
+			},
+		],
+		name: 'newWave',
+		type: 'event',
+	},
+	{
+		inputs: [],
+		name: 'getAllWaves',
+		outputs: [
+			{
+				components: [
+					{
+						internalType: 'address',
+						name: 'from',
+						type: 'address',
+					},
+					{
+						internalType: 'uint256',
+						name: 'timestamp',
+						type: 'uint256',
+					},
+					{
+						internalType: 'string',
+						name: 'message',
+						type: 'string',
+					},
+				],
+				internalType: 'struct WavePortal.Wave[]',
+				name: '',
+				type: 'tuple[]',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
 	},
 	{
 		inputs: [],
@@ -15,7 +70,7 @@ export const contractABI = [
 				type: 'uint256',
 			},
 		],
-		stateMutability: 'nonpayable',
+		stateMutability: 'view',
 		type: 'function',
 	},
 	{
@@ -38,7 +93,13 @@ export const contractABI = [
 		type: 'function',
 	},
 	{
-		inputs: [],
+		inputs: [
+			{
+				internalType: 'string',
+				name: '_message',
+				type: 'string',
+			},
+		],
 		name: 'wave',
 		outputs: [],
 		stateMutability: 'nonpayable',

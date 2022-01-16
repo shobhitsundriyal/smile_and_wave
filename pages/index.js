@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 import { ethers } from 'ethers'
 import { useState, useEffect } from 'react'
 import { contractAddress, contractABI } from '../contractdetails'
@@ -8,6 +9,9 @@ export default function Home() {
 	const [currentAccount, setCurrentAccount] = useState()
 	const [wavesByCurrentUser, setWavesByCurrentUser] = useState()
 	const [isLoading, setIsLoading] = useState(0)
+	const [message, setMessage] = useState()
+	const [textVal, setTextVal] = useState()
+	const router = useRouter()
 
 	const expectedTransactionTime = 21000
 
@@ -32,15 +36,17 @@ export default function Home() {
 			} else {
 				console.log('No authorized account found')
 			}
+			return accounts[0]
 		} catch (err) {
 			console.log(err)
 		}
 	}
+
 	/*
 	 * This runs our function when the page loads.
 	 */
 	useEffect(() => {
-		checkMetamsk()
+		checkMetamsk() //returns accounts[0]
 	}, [])
 
 	/**Connect wallet function */
@@ -74,8 +80,13 @@ export default function Home() {
 					contractABI,
 					signer
 				)
-				//await wavePortalContract.wave()
+				//console.log(message)
+				if (!message) {
+					setMessage('No message sent.... 😢😢')
+				}
+				await wavePortalContract.wave(message)
 				setIsLoading(1)
+				//Not the best fix but works for now
 				setTimeout(async () => {
 					await wavePortalContract
 						.noWavesSentby(currentAccount)
@@ -85,8 +96,14 @@ export default function Home() {
 						})
 					setIsLoading(0)
 					console.log('.......')
-					let count = await wavePortalContract.getTotalWaves()
-					console.warn(count)
+					await wavePortalContract
+						.getTotalWaves()
+						.then((count) =>
+							console.log(
+								'Retrieved total wave count... %d',
+								parseInt(count._hex)
+							)
+						)
 				}, expectedTransactionTime)
 
 				/*await wavePortalContract
@@ -118,7 +135,7 @@ export default function Home() {
 						className='m-7'
 					/>
 				</div>
-				<div className='justify-center items-center flex'>
+				<div className='justify-center items-center flex flex-col gap-2'>
 					{currentAccount ? (
 						isLoading ? (
 							<button className='text-black cursor-not-allowed flex py-3'>
@@ -132,12 +149,37 @@ export default function Home() {
 								</div>
 							</button>
 						) : (
-							<button
-								className='button text-white font-bold'
-								onClick={wave}
-							>
-								👋 Wave at Me
-							</button>
+							<>
+								<textarea
+									className=' w-full rounded-md p-2 scrollbar-hide resize-none'
+									onChange={(e) => setMessage(e.target.value)}
+									value={textVal}
+									placeholder='Type us a sweet message too...'
+									maxLength='69'
+									rows='3'
+								></textarea>
+								<div className='flex gap-x-2'>
+									<button
+										className='button text-white font-bold'
+										onClick={wave}
+									>
+										👋 Wave at Us
+									</button>
+									<button
+										className='button text-white font-bold'
+										onClick={(e) => {
+											router.push({
+												pathname: '/messages',
+												query: {
+													account: currentAccount,
+												},
+											})
+										}}
+									>
+										See all the Messages
+									</button>
+								</div>
+							</>
 						)
 					) : (
 						<button
