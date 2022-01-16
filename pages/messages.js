@@ -9,7 +9,7 @@ import { ethers } from 'ethers'
 import moment from 'moment'
 import Image from 'next/image'
 
-function messages({ account, waveContract }) {
+function Messages({ account, waveContract }) {
 	const [allMessages, setAllMessages] = useState(true) //for the toggle
 	const [gotMessages, setGotMessages] = useState(0)
 	const [msgData, setMsgData] = useState()
@@ -153,4 +153,4 @@ function messages({ account, waveContract }) {
 	)
 }
 
-export default messages
+export default Messages
